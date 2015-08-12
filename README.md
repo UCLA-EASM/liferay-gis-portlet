@@ -1,0 +1,1 @@
+# liferay-gis-portlet
