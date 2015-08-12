@@ -38,8 +38,8 @@ public class NERDemo {
 
   public static void main(String[] args) throws Exception {
 	  
-//    String serializedClassifier = "classifiers/english.all.3class.distsim.crf.ser.gz";
-    String serializedClassifier = "classifiers/chinese.misc.distsim.crf.ser.gz";
+    String serializedClassifier = "classifiers/english.all.3class.distsim.crf.ser.gz";
+//    String serializedClassifier = "classifiers/chinese.misc.distsim.crf.ser.gz";
     
     if (args.length > 0) {
       serializedClassifier = args[0];
@@ -106,9 +106,9 @@ public class NERDemo {
          assignments and an n-best list of classifications with probabilities.
       */
 
-//      String[] example = {"Good afternoon Rajat Raina, how are you today?",
-//                          "I go to school at Stanford University, which is located in California." };
-      String[] example = {"貣 摲 鵁麍, 楩椼 涬淠淉 犈犆犅 潧 腠腶舝 碢禗禈 箛箙舕 廞徲 鉌, 灉礭 溔 蒝蒧蓏 忷扴汥 姴怤昢 鳱 萐菿 莔莋莥 洷炟砏, 魵 絒翗腏 瞗穇縍 蓩蔮, 嶢嶜 灉礭蘠 痑祣筇 炾笀耔 踣 抰枅 燚璒瘭 醳鏻鐆 膣, 皵碡碙 灊灅甗 鍎鞚韕 樀樛 嗂, 餤駰鬳 裺觨誖 翀胲胵 蒛 雘雝 皾籈譧 擙樲橚 郺鋋錋 穊 罫蓱, 嵥 黐曮禷 鑏鑆驈 趏跮 "};
+      String[] example = {"Good afternoon Rajat Raina, how are you today?",
+                          "I go to school at Stanford University, which is located in California." };
+//      String[] example = {"貣 摲 鵁麍, 楩椼 涬淠淉 犈犆犅 潧 腠腶舝 碢禗禈 箛箙舕 廞徲 鉌, 灉礭 溔 蒝蒧蓏 忷扴汥 姴怤昢 鳱 萐菿 莔莋莥 洷炟砏, 魵 絒翗腏 瞗穇縍 蓩蔮, 嶢嶜 灉礭蘠 痑祣筇 炾笀耔 踣 抰枅 燚璒瘭 醳鏻鐆 膣, 皵碡碙 灊灅甗 鍎鞚韕 樀樛 嗂, 餤駰鬳 裺觨誖 翀胲胵 蒛 雘雝 皾籈譧 擙樲橚 郺鋋錋 穊 罫蓱, 嵥 黐曮禷 鑏鑆驈 趏跮 "};
       
       for (String str : example) {
         System.out.println(classifier.classifyToString(str));
