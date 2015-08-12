@@ -2,3 +2,6 @@
 翠 野 駐 戎 軒   盧 龍 轉 征 旆   遙 山 麗 如 綺   長 流 縈 似 帶   海 氣 <MISC>百</MISC> 重 樓   巖 松 <MISC>千</MISC> 丈 蓋   茲 焉 可 遊 賞   何 必 襄 城 外
 玄 兔 月 初 明   澄 輝 照 遼 碣   映 雲 光 暫 隱   隔 樹 花 如 綴   魄 滿 桂 枝 圓   輪 虧 鏡 彩 缺   臨 城 卻 影 散   帶 暈 重 圍 結   駐 蹕 俯 <MISC>九</MISC> 都   停 觀 妖 氛 滅
 碧 原 開 霧 隰   綺 嶺 峻 霞 城   煙 峰 高 下 <GPE>翠   日 浪 淺 深 明   斑 紅 妝 蕊 樹   圓 青</GPE> 壓 溜 荊   跡 巖 勞 傅 想   窺 野 訪 莘 情   巨 川 何 以 濟   舟 楫 佇 時 <GPE>英</GPE>
+
+
+"GPE": geo-political entities such as city, state/province, and country.
