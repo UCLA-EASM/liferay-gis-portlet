@@ -1,6 +1,8 @@
 package edu.ucla.macroscope.gis;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
@@ -107,22 +109,30 @@ public class NERDemo {
       */
 
 //    	Using QTS-test-corpus
-      String[] example = {"以 茲 遊 觀 極   悠 然 獨 長 想   披 卷 覽 前 蹤   撫 躬 尋 既 往   望 古 茅 茨 約   瞻 今 蘭 殿 廣   人 道 惡 高 危   虛 心 戒 盈 蕩   奉 天 竭 誠 敬   臨 民 思 惠 養   納 善 察 忠 諫   明 科 慎 刑 賞   六 五 誠 難 繼   四 三 非 易 仰   廣 待 淳 化 敷   方 嗣 云 亭 響", // 1_1_10
-    		  "秦 川 雄 帝 宅   函 谷 壯 皇 居   綺 殿 千 尋 起   離 宮 百 雉 餘   連 甍 遙 接 漢   飛 觀 迥 凌 虛 雲 日 隱 層 闕   風 煙 出 綺 疏", // 1_1_1
-    		  "巖 廊 罷 機 務   崇 文 聊 駐 輦   玉 匣 啟 龍 圖   金 繩 披 鳳 篆   韋 編 斷 仍 續   縹 帙 舒 還 卷 對 此 乃 淹 留   欹 案 觀 墳 典", // 1_1_2
-    		  "移 步 出 詞 林   停 輿 欣 武 宴   琱 弓 寫 明 月   駿 馬 疑 流 電   驚 雁 落 虛 弦   啼 猿 悲 急 箭 閱 賞 誠 多 美   於 茲 乃 忘 倦", // 1_1_3
-      "鳴 笳 臨 樂 館   眺 聽 歡 芳 節   急 管 韻 朱 絃   清 歌 凝 白 雪   彩 鳳 肅 來 儀   玄 鶴 紛 成 列 去 茲 鄭 衛 聲   雅 音 方 可 悅", // 1_1_4
-      "芳 辰 追 逸 趣   禁 苑 信 多 奇   橋 形 通 漢 上   峰 勢 接 雲 危   煙 霞 交 隱 映   花 鳥 自 參 差 何 如 肆 轍 跡   萬 里 賞 瑤 池", // 1_1_5
-      "飛 蓋 去 芳 園   蘭 橈 遊 翠 渚   萍 間 日 彩 亂   荷 處 香 風 舉   桂 楫 滿 中 川   弦 歌 振 長 嶼 豈 必 汾 河 曲   方 為 歡 宴 所", // 1_1_6
-      "落 日 雙 闕 昏   回 輿 九 重 暮   長 煙 散 初 碧   皎 月 澄 輕 素   搴 幌 玩 琴 書   開 軒 引 雲 霧 斜 漢 耿 層 閣   清 風 搖 玉 樹", // 1_1_7
-      "歡 樂 難 再 逢   芳 辰 良 可 惜   玉 酒 泛 雲 罍   蘭 殽 陳 綺 席   千 鍾 合 堯 禹   百 獸 諧 金 石 得 志 重 寸 陰   忘 懷 輕 尺 璧", // 1_1_8
-      "建 章 歡 賞 夕   二 八 盡 妖 妍   羅 綺 昭 陽 殿   芬 芳 玳 瑁 筵   珮 移 星 正 動   扇 掩 月 初 圓 無 勞 上 懸 圃   即 此 對 神 仙"}; // 1_1_9
+      String[] example = {"李世民 秦 川 雄 帝 宅   函 谷 壯 皇 居   綺 殿 千 尋 起   離 宮 百 雉 餘   連 甍 遙 接 漢   飛 觀 迥 凌 虛 雲 日 隱 層 闕   風 煙 出 綺 疏" // 1_1_10
+      , "秦 川 函 谷 漢", "香港 澳门 北京"};
       
       for (String str : example) {
         System.out.println(classifier.classifyToString(str));
       }
       System.out.println("---");
-
+ 
+      Set<String> locations = new HashSet<String>();
+      for (String str : example) {
+    	String output = classifier.classifyToString(str);
+		String[] words = output.split(" ");
+		System.out.println("wordS:"+words.length);
+		for(int j=0;j<words.length;j++) {
+			if(words[j].contains("GPE")) {
+				locations.add(words[j].substring(0, words[j].length()-4));
+			}
+		}
+      }
+      System.out.println("---");
+      
+      System.out.println(locations);
+      System.out.println("---");
+      
       for (String str : example) {
         // This one puts in spaces and newlines between tokens, so just print not println.
         System.out.print(classifier.classifyToString(str, "slashTags", false));
