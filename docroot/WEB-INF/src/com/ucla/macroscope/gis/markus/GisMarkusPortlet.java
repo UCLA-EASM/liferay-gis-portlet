@@ -1,6 +1,7 @@
-package edu.ucla.macroscope.gis;
+package com.ucla.macroscope.gis.markus;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidParameterException;
@@ -15,6 +16,11 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletException;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -22,15 +28,61 @@ import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
 import com.liferay.util.bridges.mvc.MVCPortlet;
 
-import edu.stanford.nlp.ie.AbstractSequenceClassifier;
-import edu.stanford.nlp.ie.crf.CRFClassifier;
-import edu.stanford.nlp.ling.CoreLabel;
-
+import edu.ucla.macroscope.gis.FirstLinesResult;
 
 /**
- * Portlet implementation class GisPortlet
+ * Portlet implementation class GisMarkusPortlet
  */
-public class GisPortlet extends MVCPortlet {
+public class GisMarkusPortlet extends MVCPortlet {
+	
+	public void parseHtmlforLocations(ActionRequest request, ActionResponse response) 
+			throws InvalidParameterException, PortalException, SystemException, SQLException, IOException, PortletException {
+		
+		ArrayList<Long> selectedDocumentIds = new ArrayList<Long>();
+		
+		for (Enumeration<String> parameterNames = request.getParameterNames(); parameterNames.hasMoreElements();) {
+			String parameterName = parameterNames.nextElement();
+			
+			if (!parameterName.startsWith("document-")) {
+				continue;
+			}
+			
+			if(ParamUtil.getBoolean(request, parameterName)) {
+				// NOTE: Potential bug if document IDs get more complex
+				Long documentId = Long.parseLong(parameterName.replaceAll("document-", ""));
+				selectedDocumentIds.add(documentId);
+			}
+		}
+		
+		if (selectedDocumentIds.isEmpty()) {
+			throw new InvalidParameterException("No document IDs selected");
+		}
+		
+		for (Long documentId : selectedDocumentIds) {
+//			InputStream result = null;
+			DLFileEntry document = DLFileEntryLocalServiceUtil.getDLFileEntry(documentId);
+			
+//			result = DLFileEntryLocalServiceUtil.getFileAsStream(document.getUserId(), document
+//                    .getFolderId(), document.getName(), document.getVersion());
+//			
+			Long userId = document.getUserId();
+			String version = document.getVersion();
+//			String latestfileVersion = document.getLatestFileVersion(true).toString();
+//			document.getLatestFileVersion(true).getFileVersionId();
+//			Long userId = document.getLatestFileVersion(true).getUserId();
+			File docFile = DLFileEntryLocalServiceUtil.getFile(userId, documentId, version, false);
+			
+			Document htmlDoc = Jsoup.parse(docFile, "UTF-8");
+			Elements es = htmlDoc.getElementsByAttributeValue("type", "placeName");
+			System.out.println(es.text());
+			List<String> locations = new ArrayList<String>();
+			for(Element e: es) {
+				locations.add(e.text());
+			}
+			System.out.println(locations);
+		}
+	}
+	
 	public void loadFirstLines(ActionRequest request, ActionResponse response) 
 			throws InvalidParameterException, PortalException, SystemException, SQLException, IOException, PortletException {
 		
@@ -59,10 +111,6 @@ public class GisPortlet extends MVCPortlet {
 		
 		for (Long documentId : selectedDocumentIds) {;
 			DLFileEntry document = DLFileEntryLocalServiceUtil.getDLFileEntry(documentId);
-			//BufferedReader br=null;
-			//br = new BufferedReader(new FileReader(document.getTitle()));
-			//br = new BufferedReader(bew FileReader(document));
-			
 			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 			byte[] buffer = new byte[4096];
 			
@@ -82,22 +130,15 @@ public class GisPortlet extends MVCPortlet {
 				// Assuming all files will be UTF-8. Not safe for production,
 				// and should be tested before a demo
 				String possibleFirstLines = new String(bytes, "UTF-8");
-//				System.out.println("Lines: "+possibleFirstLines);
 				firstLine = possibleFirstLines.split("[\\r\\n]+")[0];
 			} else {
 				firstLine = "<Empty file>";
 			}
-//			firstLine = document.getTreePath();//Integer.toString(document.getReadCount());
-			//br.close();
 			wordCount = Long.toString(document.getSize());
 
 			results.add(new FirstLinesResult(document, firstLine, wordCount));
-			//results.add(new FirstLinesResult(document, firstLine));
 		}
 
-		//SessionMessages.add(request, "results", results);
-		//System.out.println(SessionMessages.get(request, "results"));
-		//System.out.println(results.get(0).getLine());
 		for(int i=0; i< results.size();i++) {
 			response.setRenderParameter("result"+i, results.get(i).getLine());
 			response.setRenderParameter("title"+i, results.get(i).getContent().getTitle());
@@ -105,11 +146,11 @@ public class GisPortlet extends MVCPortlet {
 		}
 		
 		Set<String> locations = new HashSet<String>();
-		try {
-			locations = classifyResults(results);
-		} catch(Exception e) {
-			
-		}
+//		try {
+//			locations = classifyResults(results);
+//		} catch(Exception e) {
+//			
+//		}
 		String[] locationList = locations.toArray(new String[locations.size()]);
 		for(int i=0; i<locations.size();i++) {
 			response.setRenderParameter("locations", locationList[i]);
@@ -120,21 +161,4 @@ public class GisPortlet extends MVCPortlet {
 		
 	}
 
-	private Set<String> classifyResults(List<FirstLinesResult> results) throws Exception {
-		String serializedClassifier = "classifiers/chinese.misc.distsim.crf.ser.gz";
-		AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(serializedClassifier);
-		Set<String> locations = new HashSet<String>();
-		String samples[] = new String[results.size()];
-		for(int i=0; i<results.size(); i++) {
-			samples[i] = results.get(i).getContent().toString();
-			String output = classifier.classifyToString(samples[i]);
-			String[] words = output.split(" ");
-			for(int j=0;j<words.length;j++) {
-				if(words[j].contains("GPE")) {
-					locations.add(words[j].substring(0, words[j].length()-4));
-				}
-			}
-		}
-		return locations;
-	}
 }

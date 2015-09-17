@@ -16,8 +16,15 @@ for(int i=0;i<resultSize;i++)  {
 %> 
 	<h4> <%=renderRequest.getParameter("title"+i) %></h4>
 	<p> <%=renderRequest.getParameter("result"+i) %> </p>
-	<p> File Count:<%=renderRequest.getParameter("filecounts"+i) %> </p>
+	<p> File Count:<%=renderRequest.getParameter("wordCount"+i) %> </p>
 	<br/>
 <% 
 } 
+int locationsSize = Integer.parseInt(renderRequest.getParameter("locationsSize"));
+for(int i=0;i<locationsSize;i++) { 
+%>
+	<h4> <%=renderRequest.getParameter("locations"+i) %></h4>
+	<br/>
+<% 
+}
 %>

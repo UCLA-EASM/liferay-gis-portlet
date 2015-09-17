@@ -5,7 +5,7 @@ import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 public class FirstLinesResult {
 	private DLFileEntry content;
 	private String line;
-	private String filecount;
+	private String wordCount;
 	
 	/*public FirstLinesResult(DLFileEntry content, String line) {
 		super();
@@ -17,7 +17,7 @@ public class FirstLinesResult {
 		super();
 		this.content = content;
 		this.line = line;
-		this.filecount = count;
+		this.wordCount = count;
 	}
 	
 	public DLFileEntry getContent() {
@@ -26,8 +26,8 @@ public class FirstLinesResult {
 	public String getLine() {
 		return line;
 	}
-	public String getFileCount() {
-		return filecount;
+	public String getWordCount() {
+		return wordCount;
 	}
 	
 }

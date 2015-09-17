@@ -1,7 +1,44 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet"%>
 <%@ taglib uri="http://alloy.liferay.com/tld/aui" prefix="aui" %>
+<%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
+
+
+<%@ page import="javax.portlet.PortletPreferences" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import = "com.liferay.portlet.documentlibrary.model.DLFileEntry" %>
+<%@ page import = "com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil" %>
 
 <portlet:defineObjects />
+This is the <b> GIS Portlet </b> Page 1
+
+<% 
+final int fileCount = DLFileEntryLocalServiceUtil.getDLFileEntriesCount();
+List<DLFileEntry> documents = DLFileEntryLocalServiceUtil.getDLFileEntries(0, fileCount);
+List<DLFileEntry> textDocuments = new ArrayList<DLFileEntry>();
+
+for(int i=0;i<documents.size();i++) {
+	if(documents.get(i).getExtension().equals("txt")) {
+		textDocuments.add(documents.get(i));
+	}
+}
+%>
+<portlet:actionURL name="loadFirstLines" var="loadFirstLinesURL">
+</portlet:actionURL>
+
+<aui:form action="<%= loadFirstLinesURL %>" method="post">
+	<% for ( int i = 0; i < textDocuments.size(); i++ ) {
+		%>
+	<aui:input type="checkbox"  
+				name="<%= \"document-\" + Long.toString(textDocuments.get(i).getFileEntryId()) %>" label="<%=textDocuments.get(i).getTitle() %>">
+	</aui:input>
+	<% 
+	}
+	%>
+	<aui:input type="hidden" name="doumentListSize" value="<%= documents.size() %>"></aui:input>
+	<aui:input type="submit" name="" value="Find Cities" />
+</aui:form>
+
 <style type="text/css">
 #map_canvas {
     height: 500px;
@@ -102,10 +139,10 @@ function <portlet:namespace />loadScript() {
 
 window.onload = <portlet:namespace />loadScript;
 </aui:script>
- 
-<div id="map_canvas"></div>
+
+<%-- <div id="map_canvas"></div>
 
 <aui:input id="search_loc" name="search_loc:" type="text"></aui:input>
 <aui:button name="submit_f" value="Submit:" onClick="addmark('Diddy Riese')"></aui:button>
-
+--%>
 

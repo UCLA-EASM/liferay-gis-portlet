@@ -104,7 +104,7 @@ public class FirstLinesPortlet extends MVCPortlet {
 		for(int i=0; i< results.size();i++) {
 			response.setRenderParameter("result"+i, results.get(i).getLine());
 			response.setRenderParameter("title"+i, results.get(i).getContent().getTitle());
-			response.setRenderParameter("filecounts"+i, results.get(i).getFileCount());
+			response.setRenderParameter("filecounts"+i, results.get(i).getWordCount());
 		}
 		
 		response.setRenderParameter("resultSize", Integer.toString(results.size()));
