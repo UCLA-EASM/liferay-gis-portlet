@@ -122,11 +122,12 @@ public class GisPortlet extends MVCPortlet {
 
 	private Set<String> classifyResults(List<FirstLinesResult> results) throws Exception {
 		String serializedClassifier = "classifiers/chinese.misc.distsim.crf.ser.gz";
+//		String serializedClassifier = "classifiers/1";
 		AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(serializedClassifier);
 		Set<String> locations = new HashSet<String>();
 		String samples[] = new String[results.size()];
 		for(int i=0; i<results.size(); i++) {
-			samples[i] = results.get(i).getContent().toString();
+			samples[i] = results.get(i).getLine();
 			String output = classifier.classifyToString(samples[i]);
 			String[] words = output.split(" ");
 			for(int j=0;j<words.length;j++) {

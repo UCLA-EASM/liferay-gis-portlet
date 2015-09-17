@@ -41,7 +41,8 @@ public class NERDemo {
   public static void main(String[] args) throws Exception {
 	  
 //    String serializedClassifier = "classifiers/english.all.3class.distsim.crf.ser.gz";
-    String serializedClassifier = "classifiers/chinese.misc.distsim.crf.ser.gz";
+	  String serializedClassifier = "classifiers/chinese.misc.distsim.crf.ser.gz";
+//    String serializedClassifier = "classifiers/1";
     
     if (args.length > 0) {
       serializedClassifier = args[0];
